@@ -1,5 +1,7 @@
 package com.genericcompany.user.service;
 
+import com.genericcompany.user.client.EmailClient;
+import com.genericcompany.user.client.EmailRequest;
 import com.genericcompany.user.model.User;
 import com.genericcompany.user.model.Role;
 import com.genericcompany.user.repository.UserRepository;
@@ -105,5 +107,21 @@ public class UserService {
             user.setLastLogin(LocalDateTime.now());
             userRepository.save(user);
         });
+    }
+
+    @Autowired
+    private EmailClient emailClient;
+
+    @Transactional
+    public void sendPasswordResetEmail(String email, String token) {
+        User user = getUserByEmail(email).get();
+        String resetLink = "http://yourdomain.com/reset-password?token=" + token;
+
+        EmailRequest emailRequest = new EmailRequest();
+        emailRequest.setTo(user.getEmail());
+        emailRequest.setSubject("Password Reset Request");
+        emailRequest.setContent("Click here to reset your password: " + resetLink);
+
+        emailClient.sendEmail(emailRequest);
     }
 }

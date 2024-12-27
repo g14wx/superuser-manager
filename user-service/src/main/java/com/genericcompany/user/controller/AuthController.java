@@ -52,4 +52,5 @@ public class AuthController {
         userService.resetPassword(token, newPassword);
         return ResponseEntity.ok().build();
     }
+
 }
