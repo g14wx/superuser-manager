@@ -11,7 +11,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+import java.util.Collections;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -32,10 +35,23 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-        User user = userService.getUserByEmail(request.getEmail()).get();
+        Optional<User> userResponse = userService.getUserByEmail(request.getEmail());
+
+        if (!userResponse.isPresent()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        User user = userResponse.get();
+
         userService.updateLastLogin(user.getEmail());
 
-        final String token = jwtTokenUtil.generateToken((UserDetails) user);
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+        );
+
+        final String token = jwtTokenUtil.generateToken(userDetails);
 
         return ResponseEntity.ok(new AuthResponse(token, user.getEmail(), user.getRole().toString()));
     }
@@ -52,5 +68,4 @@ public class AuthController {
         userService.resetPassword(token, newPassword);
         return ResponseEntity.ok().build();
     }
-
 }
