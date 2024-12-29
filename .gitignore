@@ -41,3 +41,4 @@ build/
 /user-service/.env
 /email-service/.env
 /api-gateway/.env
+/.env

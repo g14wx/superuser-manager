@@ -50,7 +50,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}/")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
     public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         userService.hardDelete(id);
