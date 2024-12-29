@@ -1,50 +1,46 @@
-# docker-compose.dev.yml
-version: '3.8'
-
 services:
   mysql:
     image: mysql:5.7
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: user_service_dev
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-user_service_dev}
     ports:
-      - "3306:3306"
+      - "${MYSQL_PORT:-3306}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root}" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
   eureka-server:
     build:
-      context: ./eureka-server
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: eureka-server/Dockerfile.dev
     ports:
       - "8761:8761"
     volumes:
-      - ./eureka-server:/app
+      - ./:/app
       - ~/.m2:/root/.m2
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-    depends_on:
-      - mysql
 
   user-service:
     build:
-      context: ./user-service
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: user-service/Dockerfile.dev
     ports:
-      - "8081:8081"
+      - "${USER_SERVICE_PORT:-8081}:8081"
     volumes:
-      - ./user-service:/app
+      - ./:/app
       - ~/.m2:/root/.m2
     environment:
       - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/user_service_dev?createDatabaseIfNotExist=true&useSSL=false
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-user_service_dev}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_DATASOURCE_PASSWORD=${MYSQL_ROOT_PASSWORD:-root}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.jdbc.Driver
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
     depends_on:
       mysql:
@@ -54,12 +50,12 @@ services:
 
   email-service:
     build:
-      context: ./email-service
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: email-service/Dockerfile.dev
     ports:
-      - "8082:8082"
+      - "${EMAIL_SERVICE_PORT:-8082}:8082"
     volumes:
-      - ./email-service:/app
+      - ./:/app
       - ~/.m2:/root/.m2
     environment:
       - SPRING_PROFILES_ACTIVE=dev
@@ -69,12 +65,12 @@ services:
 
   api-gateway:
     build:
-      context: ./api-gateway
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: api-gateway/Dockerfile.dev
     ports:
-      - "8080:8080"
+      - "${GATEWAY_PORT:-8080}:8080"
     volumes:
-      - ./api-gateway:/app
+      - ./:/app
       - ~/.m2:/root/.m2
     environment:
       - SPRING_PROFILES_ACTIVE=dev

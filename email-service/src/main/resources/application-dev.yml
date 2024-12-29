@@ -5,8 +5,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: corplegal10.12.2019@gmail.com
-    password: "ftbj pevq rtza xcia"
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
 server:
   port: 8082
 eureka:

@@ -4,9 +4,9 @@ WORKDIR /app
 
 # Copy the parent pom first
 COPY pom.xml ./pom.xml
-COPY user-service/pom.xml ./user-service/pom.xml
-COPY user-service/src ./user-service/src
+COPY api-gateway/pom.xml ./api-gateway/pom.xml
+COPY api-gateway/src ./api-gateway/src
 
-WORKDIR /app/user-service
+WORKDIR /app/api-gateway
 
 CMD ["mvn", "spring-boot:run"]

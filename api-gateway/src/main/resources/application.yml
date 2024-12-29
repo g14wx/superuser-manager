@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${API_GATEWAY_PORT:8080}
 
 spring:
   application:
@@ -52,5 +52,5 @@ eureka:
     preferIpAddress: true
 
 jwt:
-  secret: yourSecretKey
-  expiration: 86400000 # 24 hours
+  secret: ${JWT_SECRET:your_secret_key}
+  expiration: ${JWT_EXPIRATION:86400000}
