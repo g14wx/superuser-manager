@@ -18,7 +18,7 @@ public class EmailNotificationService {
         if (emailClient != null) {
             EmailRequest request = new EmailRequest();
             request.setTo(email);
-            request.setSubject("Password Reset");
+            request.setSubject("Superuser - Password Reset");
             Map<String, Object> templateData = new HashMap<>();
             String resetLink = "http://localhost:8080/reset-password?token=" + token;
             request.setTemplate("password-reset");
@@ -28,7 +28,6 @@ public class EmailNotificationService {
             try {
                 emailClient.sendEmail(request);
             } catch (Exception e) {
-                // Log error but don't throw exception
                 System.err.println("Failed to send email: " + e.getMessage());
             }
         }

@@ -1,0 +1,14 @@
+FROM maven:3.6-jdk-8
+
+WORKDIR /app
+
+# Install spring-boot-devtools for hot reload
+RUN mkdir -p /root/.m2
+COPY pom.xml /app/pom.xml
+RUN mvn dependency:go-offline
+
+# Copy source code
+COPY src /app/src
+
+# Run the application with spring-boot-devtools
+CMD ["mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments='-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005'"]
