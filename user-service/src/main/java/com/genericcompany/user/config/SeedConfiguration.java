@@ -8,16 +8,16 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "seed")
 @Validated
 public class SeedConfiguration {
-    private String adminEmail;
-    private String adminPassword;
-    private String regularUserEmail;
-    private String regularUserPassword;
-    private String devUserEmail;
-    private String devUserPassword;
-    private String qaUserEmail;
-    private String qaUserPassword;
-    private String testerEmail;
-    private String testerPassword;
+    private String adminEmail = "admin@genericcompany.com";
+    private String adminPassword = "admin123";
+    private String regularUserEmail = "user@genericcompany.com";
+    private String regularUserPassword = "user123";
+    private String devUserEmail = "dev@genericcompany.com";
+    private String devUserPassword = "dev123";
+    private String qaUserEmail = "qa@genericcompany.com";
+    private String qaUserPassword = "qa123";
+    private String testerEmail = "tester@genericcompany.com";
+    private String testerPassword = "test123";
 
     // Getters and Setters
     public String getAdminEmail() { return adminEmail; }

@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+server:
+  port: 8082
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka-server:8761/eureka/

@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: corplegal10.12.2019@gmail.com
+    password: "ftbj pevq rtza xcia"
+server:
+  port: 8082
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/

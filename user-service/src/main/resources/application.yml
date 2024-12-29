@@ -15,19 +15,24 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+  flyway:
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
 jwt:
   secret: yourSecretKey
   expiration: 86400000 # 24 hours
 
+email-service:
+  url: http://localhost:8082
 
-seed:
-  admin-email: ${SEED_ADMIN_EMAIL:admin@genericcompany.com}
-  admin-password: ${SEED_ADMIN_PASSWORD:admin123}
-  regular-user-email: ${SEED_REGULAR_USER_EMAIL:user@genericcompany.com}
-  regular-user-password: ${SEED_REGULAR_USER_PASSWORD:user123}
-  dev-user-email: ${SEED_DEV_USER_EMAIL:dev@genericcompany.com}
-  dev-user-password: ${SEED_DEV_USER_PASSWORD:dev123}
-  qa-user-email: ${SEED_QA_USER_EMAIL:qa@genericcompany.com}
-  qa-user-password: ${SEED_QA_USER_PASSWORD:qa123}
-  tester-email: ${SEED_TESTER_EMAIL:tester@genericcompany.com}
-  tester-password: ${SEED_TESTER_PASSWORD:test123}
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+email:
+  service:
+    enabled: false

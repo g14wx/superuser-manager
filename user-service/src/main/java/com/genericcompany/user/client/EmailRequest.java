@@ -1,11 +1,12 @@
 package com.genericcompany.user.client;
+import java.util.Map;
 
 public class EmailRequest {
     private String to;
     private String subject;
-    private String content;
+    private String template;
+    private Map<String, Object> templateData;
     // Getters, setters
-
     public String getTo() {
         return to;
     }
@@ -22,11 +23,19 @@ public class EmailRequest {
         this.subject = subject;
     }
 
-    public String getContent() {
-        return content;
+    public Map<String, Object> getTemplateData() {
+        return templateData;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setTemplateData(Map<String, Object> templateData) {
+        this.templateData = templateData;
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
     }
 }

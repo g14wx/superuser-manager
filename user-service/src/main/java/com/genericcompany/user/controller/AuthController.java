@@ -4,6 +4,7 @@ import com.genericcompany.user.dto.AuthRequest;
 import com.genericcompany.user.dto.AuthResponse;
 import com.genericcompany.user.model.User;
 import com.genericcompany.user.security.JwtTokenUtil;
+import com.genericcompany.user.service.EmailNotificationService;
 import com.genericcompany.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,9 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private EmailNotificationService emailNotificationService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
@@ -59,7 +63,7 @@ public class AuthController {
     @PostMapping("/password-reset/request")
     public ResponseEntity<?> requestPasswordReset(@RequestParam String email) {
         String token = userService.initiatePasswordReset(email);
-        // TODO: Send email with reset link
+        emailNotificationService.sendPasswordResetEmail(email, token);
         return ResponseEntity.ok().build();
     }
 

@@ -49,4 +49,11 @@ public class UserController {
         userService.toggleUserActive(id);
         return ResponseEntity.ok().build();
     }
+
+    @DeleteMapping("/{id}/")
+    @PreAuthorize("hasRole('SUPER_ADMIN')")
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
+        userService.hardDelete(id);
+        return ResponseEntity.ok().build();
+    }
 }

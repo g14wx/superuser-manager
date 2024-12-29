@@ -8,12 +8,13 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.DependsOn;
 
 import java.util.Optional;
 
 @Component
-
+@DependsOn("passwordEncoder")
 public class DatabaseSeeder implements ApplicationListener<ContextRefreshedEvent> {
 
     private boolean alreadySetup = false;
@@ -28,18 +29,30 @@ public class DatabaseSeeder implements ApplicationListener<ContextRefreshedEvent
     private SeedConfiguration seedConfig;
 
     @Override
+    @Transactional
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        if (alreadySetup) {
+        if (alreadySetup || passwordEncoder == null) {
             return;
         }
 
-        createInitialUsers();
+        try {
+            // Test password encoder
+            String testEncode = passwordEncoder.encode("test");
+            System.out.println("Password encoder test in seeder: " + testEncode);
 
-        alreadySetup = true;
+            createInitialUsers();
+            alreadySetup = true;
+        } catch (Exception e) {
+            System.err.println("Error in database seeder: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     protected void createInitialUsers() {
-        // Create admin and regular user for all environments
+        if (passwordEncoder == null) {
+            throw new IllegalStateException("PasswordEncoder not initialized");
+        }
+
         createUserIfNotFound(
                 seedConfig.getAdminEmail(),
                 seedConfig.getAdminPassword(),
@@ -53,20 +66,18 @@ public class DatabaseSeeder implements ApplicationListener<ContextRefreshedEvent
         );
     }
 
-    protected User createUserIfNotFound(String email, String password, Role role) {
-        Optional<User> user = userRepository.findByEmail(email);
+    protected void createUserIfNotFound(String email, String password, Role role) {
+        Optional<User> userRes = userRepository.findByEmail(email);
 
-        if (!user.isPresent()) {
-            user = Optional.of(new User());
-            user.get().setEmail(email);
-            user.get().setPassword(passwordEncoder.encode(password));
-            user.get().setRole(role);
-            user.get().setActive(true);
-            user = Optional.ofNullable(userRepository.save(user.get()));
+        if (!userRes.isPresent()) {
+            User user = new User();
+            user.setEmail(email);
+            user.setPassword(passwordEncoder.encode(password));
+            user.setRole(role);
+            user.setActive(true);
+            user = userRepository.save(user);
 
             System.out.println("Created user: " + email + " with role: " + role);
         }
-
-        return user.orElse(null);
     }
 }

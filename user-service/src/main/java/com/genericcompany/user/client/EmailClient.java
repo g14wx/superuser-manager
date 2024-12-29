@@ -9,4 +9,3 @@ public interface EmailClient {
     @PostMapping("/api/email/send")
     void sendEmail(@RequestBody EmailRequest request);
 }
-

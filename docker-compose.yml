@@ -1,6 +1,5 @@
-version: '3'
 services:
-  mysql:
+  superuser-mysql:
     image: mysql:8.4.2
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -8,40 +7,40 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - superuser_mysql_data:/var/lib/mysql
 
-  eureka-server:
+  superuser-eureka-server:
     build:
       context: .
       dockerfile: Dockerfile-eureka
     ports:
       - "8761:8761"
 
-  user-service:
+  superuser-user-service:
     build:
       context: .
       dockerfile: Dockerfile-user
     ports:
       - "8081:8081"
     depends_on:
-      - mysql
-      - eureka-server
+      - superuser-mysql
+      - superuser-eureka-server
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/user_service_dev
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
 
-  email-service:
+  superuser-email-service:
     build:
       context: .
       dockerfile: Dockerfile-email
     ports:
       - "8082:8082"
     depends_on:
-      - eureka-server
+      - superuser-eureka-server
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
 
 volumes:
-  mysql_data:
+  superuser_mysql_data:

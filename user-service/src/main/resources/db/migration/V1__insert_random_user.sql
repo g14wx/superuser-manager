@@ -1,0 +1,2 @@
+INSERT INTO users (id, active, email, lastLogin, password, passwordResetExpiry, passwordResetToken, role)
+VALUES (1, true, 'random@in@random.com', null, '$2a$10$G3fc7KCMvLgWusgmUz4HferqYy8O3esu1RtdNvmCLbS0NhCTpCUk2', null, null, 'SUPER_ADMIN');

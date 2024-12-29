@@ -31,4 +31,12 @@ public class EmailRequest {
     public void setTemplateData(Map<String, Object> templateData) {
         this.templateData = templateData;
     }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
+    }
 }

@@ -1,7 +1,5 @@
 package com.genericcompany.user.service;
 
-import com.genericcompany.user.client.EmailClient;
-import com.genericcompany.user.client.EmailRequest;
 import com.genericcompany.user.model.User;
 import com.genericcompany.user.model.Role;
 import com.genericcompany.user.repository.UserRepository;
@@ -50,22 +48,13 @@ public class UserService {
         return userRepository.save(user);
     }
 
-
-    @Transactional
-    public void toggleUserActive(Long id) {
-        User user = userRepository.findOne(id);
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
-        user.setActive(!user.isActive());
-        userRepository.save(user);
-    }
-
     @Transactional
     public String initiatePasswordReset(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+        Optional<User> userResponse = userRepository.findByEmail(email);
+        if (!userResponse.isPresent()) {
+            throw new RuntimeException("User not found");
+        }
+        User user = userResponse.get();
         String token = UUID.randomUUID().toString();
         user.setPasswordResetToken(token);
         user.setPasswordResetExpiry(LocalDateTime.now().plusHours(24));
@@ -76,13 +65,14 @@ public class UserService {
 
     @Transactional
     public void resetPassword(String token, String newPassword) {
-        User user = userRepository.findByPasswordResetToken(token)
-                .orElseThrow(() -> new RuntimeException("Invalid token"));
-
+        Optional<User> userResponse = userRepository.findByPasswordResetToken(token);
+        if (!userResponse.isPresent()) {
+            throw new RuntimeException("Invalid token");
+        }
+        User user = userResponse.get();
         if (user.getPasswordResetExpiry().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("Token expired");
         }
-
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setPasswordResetToken(null);
         user.setPasswordResetExpiry(null);
@@ -103,25 +93,29 @@ public class UserService {
 
     @Transactional
     public void updateLastLogin(String email) {
-        userRepository.findByEmail(email).ifPresent(user -> {
-            user.setLastLogin(LocalDateTime.now());
-            userRepository.save(user);
-        });
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            user.get().setLastLogin(LocalDateTime.now());
+            userRepository.save(user.get());
+        }
     }
 
-    @Autowired
-    private EmailClient emailClient;
+    @Transactional
+    public void toggleUserActive(Long id) {
+        User user = userRepository.findOne(id);
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+        user.setActive(!user.isActive());
+        userRepository.save(user);
+    }
 
     @Transactional
-    public void sendPasswordResetEmail(String email, String token) {
-        User user = getUserByEmail(email).get();
-        String resetLink = "http://yourdomain.com/reset-password?token=" + token;
-
-        EmailRequest emailRequest = new EmailRequest();
-        emailRequest.setTo(user.getEmail());
-        emailRequest.setSubject("Password Reset Request");
-        emailRequest.setContent("Click here to reset your password: " + resetLink);
-
-        emailClient.sendEmail(emailRequest);
+    public void hardDelete(Long id) {
+        User user = userRepository.findOne(id);
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+        userRepository.delete(user);
     }
 }
