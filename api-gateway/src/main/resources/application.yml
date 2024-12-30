@@ -19,8 +19,10 @@ zuul:
       path: /api/email/**
       serviceId: email-service
       stripPrefix: false
-  sensitive-headers: Cookie,Set-Cookie
-  ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
+  #sensitive-headers: Cookie,Set-Cookie
+  #ignored-headers: Access-Control-Allow-Credentials, Access-Control-Allow-Origin
+  sensitive-headers:
+  ignored-headers:
   host:
     connect-timeout-millis: 60000
     socket-timeout-millis: 60000
