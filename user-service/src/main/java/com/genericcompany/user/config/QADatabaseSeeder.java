@@ -21,6 +21,7 @@ public class QADatabaseSeeder extends DatabaseSeeder {
         createUserIfNotFound(
                 seedConfiguration.getDevUserEmail(),
                 seedConfiguration.getDevUserPassword(),
+                seedConfiguration.getQaName(),
                 Role.REGULAR_USER
         );
     }

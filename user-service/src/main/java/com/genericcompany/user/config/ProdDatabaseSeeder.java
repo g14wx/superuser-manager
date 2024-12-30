@@ -21,6 +21,7 @@ public class ProdDatabaseSeeder extends DatabaseSeeder {
         createUserIfNotFound(
                 seedConfiguration.getDevUserEmail(),
                 seedConfiguration.getDevUserPassword(),
+                seedConfiguration.getAdminName(),
                 Role.REGULAR_USER
         );
     }

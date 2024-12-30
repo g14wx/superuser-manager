@@ -56,21 +56,24 @@ public class DatabaseSeeder implements ApplicationListener<ContextRefreshedEvent
         createUserIfNotFound(
                 seedConfig.getAdminEmail(),
                 seedConfig.getAdminPassword(),
+                seedConfig.getRegularName(),
                 Role.SUPER_ADMIN
         );
 
         createUserIfNotFound(
                 seedConfig.getRegularUserEmail(),
                 seedConfig.getRegularUserPassword(),
+                seedConfig.getRegularName(),
                 Role.REGULAR_USER
         );
     }
 
-    protected void createUserIfNotFound(String email, String password, Role role) {
+    protected void createUserIfNotFound(String email, String name, String password, Role role) {
         Optional<User> userRes = userRepository.findByEmail(email);
 
         if (!userRes.isPresent()) {
             User user = new User();
+            user.setName(name);
             user.setEmail(email);
             user.setPassword(passwordEncoder.encode(password));
             user.setRole(role);

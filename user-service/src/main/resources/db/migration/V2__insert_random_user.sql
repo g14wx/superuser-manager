@@ -1,2 +1,2 @@
-INSERT INTO users ( active, email, lastLogin, password, passwordResetExpiry, passwordResetToken, role)
-VALUES ( true, 'random@in@random.com', null, '$2a$10$G3fc7KCMvLgWusgmUz4HferqYy8O3esu1RtdNvmCLbS0NhCTpCUk2', null, null, 'SUPER_ADMIN');
+INSERT INTO users ( active, name, email, lastLogin, password, passwordResetExpiry, passwordResetToken, role)
+VALUES ( true, 'random user', 'random@in@random.com', null, '$2a$10$G3fc7KCMvLgWusgmUz4HferqYy8O3esu1RtdNvmCLbS0NhCTpCUk2', null, null, 'SUPER_ADMIN');

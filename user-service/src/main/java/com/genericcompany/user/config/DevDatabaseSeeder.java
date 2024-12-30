@@ -21,6 +21,7 @@ public class DevDatabaseSeeder extends DatabaseSeeder {
         createUserIfNotFound(
                 seedConfiguration.getDevUserEmail(),
                 seedConfiguration.getDevUserPassword(),
+                seedConfiguration.getDevName(),
                 Role.REGULAR_USER
         );
     }
