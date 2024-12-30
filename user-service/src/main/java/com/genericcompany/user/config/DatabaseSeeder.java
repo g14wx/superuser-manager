@@ -68,7 +68,7 @@ public class DatabaseSeeder implements ApplicationListener<ContextRefreshedEvent
         );
     }
 
-    protected void createUserIfNotFound(String email, String name, String password, Role role) {
+    protected void createUserIfNotFound(String email, String password,String name, Role role) {
         Optional<User> userRes = userRepository.findByEmail(email);
 
         if (!userRes.isPresent()) {
