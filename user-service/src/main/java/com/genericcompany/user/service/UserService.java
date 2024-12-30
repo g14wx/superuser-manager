@@ -40,7 +40,8 @@ public class UserService {
         if (user == null) {
             throw new RuntimeException("User not found");
         }
-
+        user.setRole(userDetails.getRole());
+        user.setName(userDetails.getName());
         user.setEmail(userDetails.getEmail());
         if (userDetails.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(userDetails.getPassword()));
