@@ -20,7 +20,7 @@ public class EmailNotificationService {
             request.setTo(email);
             request.setSubject("Superuser - Password Reset");
             Map<String, Object> templateData = new HashMap<>();
-            String resetLink = "http://localhost:8080/reset-password?token=" + token;
+            String resetLink = "https://superuser.codelogystudios.com/change-password?token=" + token;
             request.setTemplate("password-reset");
             templateData.put("resetLink", resetLink);
             request.setTemplateData(templateData);
