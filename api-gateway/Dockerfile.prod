@@ -1,0 +1,34 @@
+FROM maven:3.6-jdk-8-slim AS builder
+
+WORKDIR /build
+
+# Copy the parent pom first
+COPY pom.xml .
+COPY eureka-server/pom.xml eureka-server/
+COPY user-service/pom.xml user-service/
+COPY email-service/pom.xml email-service/
+COPY api-gateway/pom.xml api-gateway/
+
+# Copy only gateway source code
+COPY api-gateway/src api-gateway/src/
+
+# Download dependencies and build
+RUN mvn dependency:go-offline -B
+RUN mvn clean package -pl api-gateway -DskipTests
+
+FROM openjdk:8-jre-slim
+
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+COPY --from=builder /build/api-gateway/target/*.jar app.jar
+
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=10s --retries=5 --start-period=40s \
+  CMD curl -f http://localhost:8080 || exit 1
+
+ENV JAVA_OPTS="-Xms256m -Xmx512m -Djava.security.egd=file:/dev/./urandom"
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

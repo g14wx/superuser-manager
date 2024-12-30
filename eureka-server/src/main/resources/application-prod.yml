@@ -5,9 +5,27 @@ spring:
 server:
   port: 8761
 eureka:
+  instance:
+    hostname: eureka-server
+    prefer-ip-address: true
   client:
     registerWithEureka: false
     fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://eureka-server:${server.port}/eureka/
   server:
     wait-time-in-ms-when-sync-empty: 0
     enableSelfPreservation: true
+
+endpoints:
+  enabled: true
+  health:
+    sensitive: false
+
+management:
+  security:
+    enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: "*"

@@ -1,0 +1,50 @@
+# Dockerfile.base
+FROM maven:3.6-jdk-8-slim AS builder
+
+WORKDIR /build
+COPY pom.xml .
+COPY ./*/pom.xml ./*/
+RUN for dir in */; do mkdir -p ${dir}/src/main/java; done
+
+# Download dependencies
+RUN mvn dependency:go-offline
+
+# Copy source code
+COPY . .
+
+# Build application
+RUN mvn clean package -DskipTests
+
+# Production image
+FROM openjdk:8-jre-slim
+
+# Add monitoring tools
+RUN apt-get update && \
+    apt-get install -y curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Add non-root user
+RUN groupadd -r spring && useradd -r -g spring spring
+
+# Set working directory
+WORKDIR /app
+
+# Set ownership
+RUN chown -R spring:spring /app
+
+# Switch to non-root user
+USER spring
+
+# Common environment variables
+ENV TZ=UTC \
+    JAVA_OPTS="-XX:+UseG1GC -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+ExitOnOutOfMemoryError"
+
+# Expose health check port
+EXPOSE 8080
+
+# Add health check script
+COPY --chown=spring:spring health-check.sh /app/health-check.sh
+RUN chmod +x /app/health-check.sh
+
+# Default command
+CMD ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

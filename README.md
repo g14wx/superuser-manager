@@ -163,6 +163,12 @@ Remove all (if needed):
 docker-compose -f docker-compose.dev.yml down --rmi all --volumes --remove-orphans
 ```
 
+Handcrafted command to delete only those images created for the containers in the docker-compose file
+
+```bash
+docker image rm super-user-manager-email-service super-user-manager-user-service super-user-manager-eureka-server super-user-manager-api-gateway
+```
+
 ## API Endpoints
 
 
